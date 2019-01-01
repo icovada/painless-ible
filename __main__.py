@@ -1,29 +1,53 @@
-import datetime
+"""
+Automatic LedBuild calendar file generator
+"""
+
+from datetime import datetime as dt, timedelta
 import json
 
 with open("animations.config", "r") as animationsfile:
-    animations = json.loads(animationsfile)
+    ANIMATIONS = json.loads(animationsfile)
 
 with open("colours.config", "r") as coloursfile:
-    colours = json.loads(coloursfile)
+    COLOURS = json.loads(coloursfile)
 
 with open("calendar.config", "r") as calendarfile:
-    calendar = json.loads(calendarfile)
+    CALENDAR = json.loads(calendarfile)
 
-assert "default" in animations.keys()
+assert "default" in ANIMATIONS.keys()
 
-defaultanimation = animations.pop("default")
-animationlist = []
+DEFAULTANIMATION = ANIMATIONS.pop("default")
+ANIMATIONLIST = []
 
-for i, j in animations.items():
+for i, j in ANIMATIONS.items():
     for k in j:
-        if k not in animationlist:
-            animationlist.append(k)
+        if k not in ANIMATIONLIST:
+            ANIMATIONLIST.append(k)
 
 
 # Header
-header1 = [0x50, 0x48, 0x54, 0x00, 0x00, 0x00, 0x00,
-           0x00, 0x31, 0x31, 0x30, 0x00, 0x00, 0x00, 0x00, 0x00]
-heaser2 = "1/1/2019/"
-header3 = [0x00, 0x00, 0xD9, 0x00, 0x00, 0x00]
-fieldseparator = 0x1D
+HEADER1 = bytearray([0x50, 0x48, 0x54, 0x00, 0x00, 0x00, 0x00,
+                     0x00, 0x31, 0x31, 0x30, 0x00, 0x00, 0x00, 0x00, 0x00])
+HEADER2 = bytearray(
+    "1/{}/{}/".format(CALENDAR["year"], CALENDAR["month"]), "ascii")
+HEADER3 = bytearray([0x00, 0x00, 0xD9, 0x00, 0x00, 0x00])
+FIELDSEPARATOR = 0x1D
+
+OUTPUTFILE = open("out.pnl", "wb")
+OUTPUTFILE.write(HEADER1)
+OUTPUTFILE.write(HEADER2)
+OUTPUTFILE.write(HEADER3)
+
+
+def findday(datetime, isoweekday):
+    """
+    Find the next monday/tuesday etc
+    starting from datetime
+    """
+    assert 1 <= isoweekday <= 7, "Days go from 1 to 7"
+    while dt.isoweekday(datetime) != isoweekday:
+        datetime = datetime + timedelta(days=1)
+    return datetime
+
+
+OUTPUTFILE.close()
