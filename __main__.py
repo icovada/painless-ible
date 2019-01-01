@@ -17,7 +17,15 @@ with open("calendar.config", "r") as calendarfile:
 assert "default" in ANIMATIONS.keys()
 
 DEFAULTANIMATION = ANIMATIONS.pop("default")
-ANIMATIONLIST = []
+
+BASEDATE = dt(year=CALENDAR["year"],
+              month=CALENDAR["month"],
+              day=CALENDAR["day"])
+ENDDATE = dt(year=CALENDAR["year"] + 1,
+             month=CALENDAR["month"],
+             day=CALENDAR["day"])
+
+ANIMATIONLIST = [BASEDATE + timedelta(days=x) for x in range(0, (ENDDATE - BASEDATE).days)]
 
 for i, j in ANIMATIONS.items():
     for k in j:

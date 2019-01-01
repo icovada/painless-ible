@@ -1,1 +1,1 @@
-[COC](https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Roosterhawaii.jpg/1920px-Roosterhawaii.jpg)
+![COC](https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Roosterhawaii.jpg/1920px-Roosterhawaii.jpg)
