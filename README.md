@@ -98,7 +98,7 @@ Regardless of the fact that every "colour" already defines a set of predefined p
 
 `0000 0000 0000 0000 0000 0000 0000 0000 999a 5300 0002 0001 2001 01e5 0701 01e5 0700 00`
 
-* Number of group, increments from 0: `0000`
+* Number of group, increments from 0: `0000`. NOTICE: Accepted values: 0-199.
 * Timeslot inside group: `0000`
 * Colour of block, `long`: `0000 0000`
 * Colour of block (again), `long`: `0000 0000`
