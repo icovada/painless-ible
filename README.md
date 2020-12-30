@@ -1,7 +1,4 @@
 # painless-ible
-Because he default LedBulder calendar sucks for me
-
-
 ## The original application
 The application (LedBuild) allows to program animations and text for LED panels built by the now foreclosed IBLE Srl. This project only takes in consideration their Pharnacy Cross
 
@@ -9,7 +6,7 @@ The configuration consists of a list of many preset animations called "programs"
 
 You must define a "base" animation which will be used when no overrides are set
 
-### Scheduling animations
+## Scheduling animations
 
 The application provides a calendar window with two levels of nested settings
 
@@ -95,14 +92,13 @@ Let's dissect the binary code:
 * Separator `1D`
 
 ### Program (animation) data
-Since the "colour" has two programs we will find two sections, one for each animation, separated by `1E 00`
+Regardless of the fact that every "colour" already defines a set of predefined programs, the data is expanded in the final savefile, with a block for every program re-expliciting its start and end time, day schedule and colour code, as follows:
 
 `0000 0000 0000 0000 0000 0000 0000 0000 999a 5300 0002 0001 2001 01e5 0701 01e5 0701 00`
 
 `0000 0000 0000 0000 0000 0000 0000 0000 999a 5300 0002 0001 2001 01e5 0701 01e5 0700 00`
 
-* `00`, only from the second program of the same colour
-* Unknown: `0000 0000`
+* Number of group, increments from 0: `0000 0000`
 * Colour of block, `long`: `0000 0000`
 * Colour of block (again), `long`: `0000 0000`
 * Unknown: `0000`
@@ -127,6 +123,34 @@ Bitmap of weekdays is as follows:
 00001000 Wednesday
 00000100 Tuesday
 00000010 Monday
-```
 The scope of the las bit is most likely `not used`
+```
 
+First block after the initial separator has an initial padding `00`. Blocks are separated from eachother by `1E` and then three bytes of zeroes
+
+## Real data dissection:
+
+* Green: 1-3, 8-11 February
+  * From 1 AM to 2 AM: AS-02, APERTOoradata
+* Navy: 4 February
+  * From 12 AM to 12 PM: AS-03, APERTOoradata
+  * From 5 PM to 6 PM: AS-03, APERTOoradata
+
+The program already outputs what we should expect to see in the savefile output
+
+![Show as lines](docs/images/showaslines.png)
+
+Let's look at the complete hex dump!
+
+|Part|Hex|ASCII or value|
+|-|-|-|
+|Header|`5048 5400 0000 0000 3131 3000 0000 0000`|  PHT.....110.....|
+|Starting date|`312f 312f 3230 3231 2f00 00` | 1/1/2021/.. (note: calendar in application starts in January)
+|Length of file|`48 0100 001d`| 328|
+|Separator|`1D`||
+|Data block|(next table)||
+|Separator|`1D`||
+|Program names|`4150 4552 544F 6F72 6164 6174 6120 2020 2020 2020 2020 2020 1C41 532D 3032 1C41 532D 3033 1C`|APERTOoradata           AS-02AS-03|
+|Separator|`1D`||
+|End of file|`00 FF 00`||
+|Separator|`1D`||
