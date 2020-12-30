@@ -20,6 +20,44 @@ Every day of the year can be assigned to a different "colour", like so:
 
 ![Calendar](docs/images/calendar.png)
 
+Colour list and hex values:
+
+| colour name  | hex value in savefile |
+|--------------|-----------------------|
+| Black        | `00`                  |
+| Maroon       | `01`                  |
+| Green        | `02`                  |
+| Olive        | `03`                  |
+| Navy         | `04`                  |
+| Purple       | `05`                  |
+| Teal         | `06`                  |
+| Gray         | `07`                  |
+| Silver       | `08`                  |
+| Red          | `09`                  |
+| Lime         | `0a`                  |
+| Yellow       | `0b`                  |
+| Blue         | `0c`                  |
+| Fuchsia      | `0d`                  |
+| Aqua         | `0e`                  |
+| Orange       | `0f`                  |
+| MoneyGreen   | `10`                  |
+| Sky          | `11`                  |
+| Cream        | `12`                  |
+| MedGray      | `13`                  |
+| Violet       | `14`                  |
+| Pink         | `15`                  |
+| Light Maroon | `16`                  |
+| Hot Violet   | `17`                  |
+| Wood Green   | `18`                  |
+| Hot Yellow   | `19`                  |
+| Hot Fuchsia  | `1a`                  |
+| Color 1      | `1b`                  |
+| Color 2      | `1c`                  |
+| Color 3      | `1d`                  |
+| Color 4      | `1e`                  |
+| Color 5      | `1f`                  |
+
+
 ## Savefile dissection
 
 Schedules are output as a binary .cal file and contain 12 solar months of data.
@@ -69,8 +107,23 @@ Since the "colour" has two programs we will find two sections, one for each anim
 * End time, hours, `int`: `02`
 * Start time, minutes, `int`: `00`
 * Start time, hours, `int`: `01`
-* Unknown `2001 01e5 0701 01e5 07`
+* Bitmap of weekdays, `int`: `20`
+* Day of the year, `int`: `01`
+* Month of the year, `int`: `01`
+* Unknown `e5 0701 01e5 07`
 * Index of program `int`. Lookup to the string in the file footer
 * Unknown `00`
 * End of section: `1e`
+
+Bitmap of weekdays is as follows:
+```
+10000000 Sunday
+01000000 Saturday
+00100000 Friday
+00010000 Thursday
+00001000 Wednesday
+00000100 Tuesday
+00000010 Monday
+```
+The scope of the las bit is most likely `not used`
 
