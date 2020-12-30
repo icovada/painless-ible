@@ -98,18 +98,22 @@ Regardless of the fact that every "colour" already defines a set of predefined p
 
 `0000 0000 0000 0000 0000 0000 0000 0000 999a 5300 0002 0001 2001 01e5 0701 01e5 0700 00`
 
-* Number of group, increments from 0: `0000 0000`
+* Number of group, increments from 0: `0000`
+* Timeslot inside group: `0000`
 * Colour of block, `long`: `0000 0000`
 * Colour of block (again), `long`: `0000 0000`
-* Unknown: `0000`
+* Unknown: `0000 999A 5300`
 * End time, minutes, `int`: `00`
 * End time, hours, `int`: `02`
 * Start time, minutes, `int`: `00`
 * Start time, hours, `int`: `01`
 * Bitmap of weekdays, `int`: `20`
-* Day of the year, `int`: `01`
-* Month of the year, `int`: `01`
-* Unknown `e5 0701 01e5 07`
+* End day, `int`: `01`
+* End month, `int`: `01`
+* Separator `e507`
+* Start day, `int`: `01`
+* Start month, `int`: `01`
+* Separator `e507`
 * Index of program `int`. Lookup to the string in the file footer
 * Unknown `00`
 * End of section: `1e`
@@ -150,7 +154,45 @@ Let's look at the complete hex dump!
 |Separator|`1D`||
 |Data block|(next table)||
 |Separator|`1D`||
-|Program names|`4150 4552 544F 6F72 6164 6174 6120 2020 2020 2020 2020 2020 1C41 532D 3032 1C41 532D 3033 1C`|APERTOoradata           AS-02AS-03|
+|Program names|`4150 4552 544F 6F72 6164 6174 6120 2020 2020 2020 2020 2020 1C41 532D 3032 1C41 532D 3033 1C`|<pre>APERTOoradata           AS-02AS-03</pre>|
 |Separator|`1D`||
 |End of file|`00 FF 00`||
 |Separator|`1D`||
+
+As per the picture above we should expect 8 different lines, and we do:
+
+```
+      00 00 00 00 00 02 00 00 00 02 00 00 00 00 00 99 9A 53 00 00 02 00 01 0E 03 02 E5 07 01 02 E5 07 01 00 1E 
+00 00 00 00 00 00 00 02 00 00 00 02 00 00 00 00 00 99 9A 53 00 00 02 00 01 0E 03 02 E5 07 01 02 E5 07 00 00 1E 
+00 00 00 01 00 00 00 04 00 00 00 04 00 00 00 00 00 99 9A 53 00 00 0C 00 00 10 04 02 E5 07 04 02 E5 07 02 00 1E 
+00 00 00 01 00 00 00 04 00 00 00 04 00 00 00 00 00 99 9A 53 00 00 0C 00 00 10 04 02 E5 07 04 02 E5 07 00 00 1E 
+00 00 00 01 00 01 00 04 00 00 00 04 00 00 00 00 00 99 9A 53 00 00 12 00 11 10 04 02 E5 07 04 02 E5 07 02 00 1E 
+00 00 00 01 00 01 00 04 00 00 00 04 00 00 00 00 00 99 9A 53 00 00 12 00 11 10 04 02 E5 07 04 02 E5 07 00 00 1E 
+00 00 00 02 00 00 00 02 00 00 00 02 00 00 00 00 00 99 9A 53 00 00 02 00 01 1E 0B 02 E5 07 08 02 E5 07 01 00 1E 
+00 00 00 02 00 00 00 02 00 00 00 02 00 00 00 00 00 99 9A 53 00 00 02 00 01 1E 0B 02 E5 07 08 02 E5 07 00 00 1E
+```
+
+Let's check them more closely:
+
+|Part | Line1 | Line2| Line3| Line4| Line5| Line6| Line7| Line8|
+|-|-|-|-|-|-|-|-|-|
+|Header|`00`|`0000 00`|`0000 00`|`0000 00`|`0000 00`|`0000 00`|`0000 00`|`0000 00`|
+|Group #|`0000`|`0000`|`0100`|`0100`|`0100`|`0100`|`0200`|`0200`|
+|Timeslot|`0000`|`0000`|`0000`|`0000`|`0100`|`0100`|`0000`|`0000`|
+|Block colour|`0200 0000`|`0200 0000`|`0400 0000`|`0400 0000`|`0400 0000`|`0400 0000`|`0200 0000`|`0200 0000`|
+|Block colour x2|`0200 0000`|`0200 0000`|`0400 0000`|`0400 0000`|`0400 0000`|`0400 0000`|`0200 0000`|`0200 0000`|
+|Unknown|``0000 999A 5300``|``0000 999A 5300``|``0000 999A 5300``|``0000 999A 5300``|``0000 999A 5300``|``0000 999A 5300``|``0000 999A 5300``|``0000 999A 5300``|
+|End time, m|`00`|`00`|`00`|`00`|`00`|`00`|`00`|`00`|
+|End time, h|`02`|`02`|`0C`|`0C`|`12`|`12`|`02`|`02`|
+|Start time, m|`00`|`00`|`00`|`00`|`00`|`00`|`00`|`00`|
+|Start time, h|`01`|`01`|`00`|`00`|`11`|`11`|`01`|`01`|
+|Bitmap of weekdays|`0E`|`0E`|`10`|`10`|`10`|`10`|`1E`|`1E`|
+End day|`03`|`03`|`04`|`04`|`04`|`04`|`0B`|`0B`|
+End month|`02`|`02`|`02`|`02`|`02`|`02`|`02`|`02`|
+Unknown|`e507`|`e507`|`e507`|`e507`|`e507`|`e507`|`e507`|`e507`|
+Start day|`01`|`01`|`04`|`04`|`04`|`04`|`08`|`08`|
+Start month|`02`|`02`|`02`|`02`|`02`|`02`|`02`|`02`|
+Unknown|`e507`|`e507`|`e507`|`e507`|`e507`|`e507`|`e507`|`e507`|
+Program index|`01`|`00`|`02`|`00`|`02`|`00`|`01`|`00`|
+Unknown|`00`|`00`|`00`|`00`|`00`|`00`|`00`|`00`|
+Separator|`1e`|`1e`|`1e`|`1e`|`1e`|`1e`|`1e`|`1e`|
