@@ -83,10 +83,9 @@ Let's dissect the binary code:
 
 ### File header
 * Header: `5048 5400 0000 0000 3131 3000 0000 0000  PHT.....110.....`
-* Beginning date of schedule. `String(11)`, right-padded with zeroes `312f 312f 3230 3231 2f00 00 1/1/2021/..`
-* Length of file. `Long`, little endian `6a 0000 00 j...`
+* Beginning date of schedule. `string(11)`, right-padded with zeroes `312f 312f 3230 3231 2f00 00 1/1/2021/..`
+* Length of file. `long`, little endian `6a 0000 00 j...`
 * Separator `1D`
-* Padding: 16 bytes of zeroes
 
 ### File footer (begins at 69)
 * Separator `1D`
@@ -96,13 +95,17 @@ Let's dissect the binary code:
 * Separator `1D`
 
 ### Program (animation) data
-Since the "colour" has two programs we will find two sections, one for each animation, unexplicably separated by 17 bytes of zeroes
+Since the "colour" has two programs we will find two sections, one for each animation, separated by `1E 00`
 
-`999a 5300 0002 0001 2001 01e5 0701 01e5 0701 001e`
+`0000 0000 0000 0000 0000 0000 0000 0000 999a 5300 0002 0001 2001 01e5 0701 01e5 0701 00`
 
-`999a 5300 0002 0001 2001 01e5 0701 01e5 0700 001e`
+`0000 0000 0000 0000 0000 0000 0000 0000 999a 5300 0002 0001 2001 01e5 0701 01e5 0700 00`
 
-* Start of block: `999a 5300`
+* `00`, only from the second program of the same colour
+* Unknown: `0000 0000`
+* Colour of block, `long`: `0000 0000`
+* Colour of block (again), `long`: `0000 0000`
+* Unknown: `0000`
 * End time, minutes, `int`: `00`
 * End time, hours, `int`: `02`
 * Start time, minutes, `int`: `00`
