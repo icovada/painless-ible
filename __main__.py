@@ -2,91 +2,55 @@
 Automatic LedBuild calendar file generator
 """
 
-from datetime import datetime as dt, timedelta
-import json
+from datetime import datetime as dt
+from datetime import timedelta
 import logging
+from settings import YEAR, SHIFT_DURATION, FIRST_SHIFT_BEGIN, SHIFT_ROTATION_DAYS
+from scheduling import col_monday, col_work_day, col_shiftbegin, col_shiftday, col_shiftend, col_shiftendholiday
+from objects import Day
 
 logging.basicConfig(level=logging.DEBUG)
 
-with open("animations.config", "r") as animationsfile:
-    ANIMATIONS = json.load(animationsfile)
+# Create dictionary for the whole year
+yearbegin = dt(YEAR,1,1)
+yearend = dt(YEAR+1,1,1)
+curday = yearbegin
 
-with open("colours.config", "r") as coloursfile:
-    COLOURS = json.load(coloursfile)
+yeardict = {}
+while curday != yearend:
+    yeardict[curday] = Day(curday)
+    if curday >= FIRST_SHIFT_BEGIN:
+        shift_delta = (curday-FIRST_SHIFT_BEGIN).days
+        if shift_delta % SHIFT_ROTATION_DAYS == 0:
+            yeardict[curday].shift = "begin"
+        elif shift_delta % SHIFT_ROTATION_DAYS > 0 and shift_delta % SHIFT_ROTATION_DAYS < 7:
+            yeardict[curday].shift = "day"
+        elif shift_delta % SHIFT_ROTATION_DAYS == 7:
+            yeardict[curday].shift = "end"
 
-with open("calendar.config", "r") as calendarfile:
-    CALENDAR = json.load(calendarfile)
-
-assert "default" in ANIMATIONS.keys()
-
-DEFAULTANIMATION = ANIMATIONS.pop("default")
-ANIMATIONLIST = []
-
-BASEDATE = dt(year=CALENDAR["year"],
-              month=CALENDAR["month"],
-              day=1)
-ENDDATE = dt(year=CALENDAR["year"] + 1,
-             month=CALENDAR["month"],
-             day=1)
-
-YEAR = CALENDAR["year"]
-
-SCHEDULE = {}
-
-# SCHEDULE = {(BASEDATE + timedelta(days=x)):None for x in range(0, (ENDDATE - BASEDATE).days}
-for x in range(0, (ENDDATE - BASEDATE).days):
-    SCHEDULE[BASEDATE + timedelta(days=x)] = None
-
-for i, j in ANIMATIONS.items():
-    for k in j:
-        if k not in ANIMATIONLIST:
-            ANIMATIONLIST.append(k)
-
-ANIMATIONLIST.append(DEFAULTANIMATION)
+    curday = curday+timedelta(days=1)
 
 
-# Header
-HEADER1 = bytearray([0x50, 0x48, 0x54, 0x00, 0x00, 0x00, 0x00,
-                     0x00, 0x31, 0x31, 0x30, 0x00, 0x00, 0x00, 0x00, 0x00])
-HEADER2 = "1/{}/{}/".format(CALENDAR["month"],CALENDAR["year"]).encode("ascii")
-HEADER3 = bytearray([0x00, 0x00, 0xD9, 0x00, 0x00, 0x00])
-FIELDSEPARATOR = 0x1D
+# Colour all non-holidays as working days
+for k, v in yeardict.items():
+    if not v.holiday:
+        v.colour = col_shiftbegin
 
-OUTPUTFILE = open("out.pnl", "wb")
-OUTPUTFILE.write(HEADER1)
-OUTPUTFILE.write(HEADER2)
-OUTPUTFILE.write(HEADER3)
+# Colour all mondays as mondays
+for k, v in yeardict.items():
+    if not v.holiday:
+        if v.dt.isoweekday == 1:
+            v.colour = col_monday
 
+for k, v in yeardict.items():
+    if v.shift == "begin":
+        v.colour = col_shiftbegin
+    elif v.shift == "day":
+        v.colour = col_shiftday
+    elif v.shift == "end":
+        if v.holiday:
+            v.colour = col_shiftendholiday
+        else:
+            v.colour = col_shiftend
 
-def findday(datetime, isoweekday):
-    """
-    Find the next monday/tuesday etc
-    starting from datetime
-    """
-    assert 1 <= isoweekday <= 7, "Days go from 1 to 7"
-    while dt.isoweekday(datetime) != isoweekday:
-        datetime = datetime + timedelta(days=1)
-    return datetime
-
-
-def calendarfill():
-    for schedule in CALENDAR["scheduling"]:
-        for occurrence in schedule.values():
-            for repetition in occurrence:
-                start = dt(year=YEAR,
-                           month=repetition["begins-month"],
-                           day=repetition["begins-day"])
-                for i in range(0, repetition["repeats-for"]):
-                    repeatsevery = repetition["repeats-every"] if "repeats-every" in repetition else 0
-                    dayseries = i
-                    offset= 0
-                    for j in CALENDAR["templates"][list(schedule)[0]]:
-                        targetdate = start + timedelta(days=dayseries*repeatsevery+offset)
-                        SCHEDULE[targetdate] = j
-                        offset = offset + 1
-
-calendarfill()
-
-print(SCHEDULE)
-
-OUTPUTFILE.close()
+[val.colour for key, val in yeardict.items()]
