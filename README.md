@@ -1,6 +1,6 @@
 # painless-ible
 ## The original application
-The application (LedBuild) allows to program animations and text for LED panels built by the now foreclosed IBLE Srl. This project only takes in consideration their Pharnacy Cross
+The application (LedBuild) allows to program animations and text for LED panels built by the now foreclosed IBLE Srl. This project only takes in consideration their Pharmacy Cross
 
 The configuration consists of a list of many preset animations called "programs" and customisable scrolling text.
 
