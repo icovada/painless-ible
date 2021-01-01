@@ -1,5 +1,6 @@
+from inspect import ArgInfo
 import plugin_collection 
-from settings import MORNING, AFTERNON
+from settings import ANIMATIONS_OPEN, MORNING, AFTERNOON
 
 class Weekdays(plugin_collection.Plugin):
     """
@@ -7,10 +8,13 @@ class Weekdays(plugin_collection.Plugin):
     """
     def __init__(self):
         super().__init__()
-        self.priority = 0
+        self.priority = 1
         self.description = 'Weekdays'
 
     def perform_operation(self, argument):
         for k, v in argument.items():
             if not v.holiday:
-                v.schedule = [MORNING, AFTERNON]
+                v.morning = ANIMATIONS_OPEN
+                v.afternoon = ANIMATIONS_OPEN
+
+        return argument

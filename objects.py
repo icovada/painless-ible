@@ -17,7 +17,11 @@ class Day():
             self.holiday = False
 
         self.shift = None
-        self.schedule = []
+        self.night_begin = None
+        self.morning = None
+        self.lunch = None
+        self.afternoon = None
+        self.night_end = None
 
 class Colour():
     colour: int

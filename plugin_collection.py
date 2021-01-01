@@ -60,6 +60,7 @@ class PluginCollection(object):
             for j in self.plugins:
                 if j.priority == i:
                     print(f'    Applying {j.description}')
+                    argument = j.perform_operation(argument)
 
     def walk_package(self, package):
         """Recursively walk the supplied package to retrieve all plugins
