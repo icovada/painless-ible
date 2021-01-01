@@ -8,7 +8,6 @@ class Day():
     holiday: bool
     shift: List[str]
     dt: datetime
-    colour: Colour
 
     def __init__(self, dt) -> None:
         self.dt = dt
@@ -18,23 +17,16 @@ class Day():
             self.holiday = False
 
         self.shift = None
-        self.colour = None
-
-
-class Program():
-    begin: tuple
-    end: tuple
-    programs: list
-
-    def __init__(self, begin, end, programs) -> None:
-        self.begin = begin
-        self.end = end
-        self.programs = programs
+        self.schedule = []
 
 class Colour():
     colour: int
-    programs: List[Program]
 
     def __init__(self, colour, programs) -> None:
         self.colour = colour
         self.programs = programs
+
+class Timeslot():
+    def __init__(self, begin: tuple, end: tuple) -> None:
+        self.begin = begin
+        self.end = end
