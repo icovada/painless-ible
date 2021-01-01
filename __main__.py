@@ -5,7 +5,7 @@ Automatic LedBuild calendar file generator
 from datetime import datetime as dt
 from datetime import timedelta
 import logging
-from settings import YEAR, SHIFT_DURATION, FIRST_SHIFT_BEGIN, SHIFT_ROTATION_DAYS
+from settings import YEAR
 from objects import Day
 from plugin_collection import PluginCollection
 
@@ -25,8 +25,11 @@ def main():
 
     my_plugins.apply_all_plugins_on_value(yeardict)
 
-    return my_plugins
+    schedules = set()
+    for k, v in yeardict.items():
+        schedules.add(str(v.get_schedule()))
 
+    print(schedules)
 
 if __name__ == '__main__':
     main()

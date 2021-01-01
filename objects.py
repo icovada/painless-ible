@@ -23,6 +23,11 @@ class Day():
         self.afternoon = None
         self.night_end = None
 
+    def get_schedule(self):
+        schedule = [self.night_begin, self.morning, self.lunch, self.afternoon, self.night_end]
+
+        return schedule
+
 class Colour():
     colour: int
 

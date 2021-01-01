@@ -1,6 +1,6 @@
 from inspect import ArgInfo
 import plugin_collection 
-from settings import ANIMATIONS_OPEN, MORNING, AFTERNOON
+from settings import ANIMATIONS_OPEN
 
 class Weekdays(plugin_collection.Plugin):
     """

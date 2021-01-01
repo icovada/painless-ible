@@ -1,6 +1,4 @@
 import plugin_collection 
-from settings import MORNING, AFTERNOON, ANIMATIONS_OPEN, ANIMATIONS_SHIFT
-
 class Mondays(plugin_collection.Plugin):
     """
     This plugin fills the week with standard weekday configuration
