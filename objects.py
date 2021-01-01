@@ -36,10 +36,8 @@ class Timeslot():
     def __init__(self, begin: tuple, end: tuple, animations: str) -> None:
         self.begin = begin
         self.end = end
-        if animations is not None:
-            self.animations = globals()[animations]
-        else:
-            self.animations = None
+        self.animations = animations
+
 
 class Colour():
     colour: int
@@ -74,4 +72,30 @@ class Colour():
             thisslot = Timeslot(*TIME_NIGHT_END, timeslots[4])
             slotobjects.append(thisslot)
 
-        return slotobjects
+        aggslotlist = []
+        while len(slotobjects) > 0:
+            aggslot, slotobjects = self._aggregate_timeslots(slotobjects)
+            aggslotlist = aggslotlist + aggslot
+
+        return aggslotlist
+
+    def _aggregate_timeslots(self, slotobjects: List[Timeslot]):
+        """
+        Recursive function to aggregate consecutive identical timeslots
+        Input:
+        List of timeslots, position to begin looking from
+        """
+
+        if len(slotobjects) == 1:
+            return slotobjects, []
+
+        if slotobjects[0].animations == slotobjects[1].animations and slotobjects[0].end == slotobjects[1].begin:
+            aggslot = [Timeslot(slotobjects[0].begin, slotobjects[1].end, slotobjects[0].animations)]
+            todolist = []
+            if len(slotobjects) >= 3:
+                aggslot, todolist = self._aggregate_timeslots(aggslot + slotobjects[2:])
+            
+            return aggslot, todolist
+        
+        else:
+            return [slotobjects[0]], slotobjects[1:]
