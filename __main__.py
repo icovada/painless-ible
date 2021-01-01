@@ -6,7 +6,7 @@ from datetime import datetime as dt
 from datetime import timedelta
 import logging
 from settings import YEAR
-from objects import Day
+from objects import Colour, Day
 from plugin_collection import PluginCollection
 
 logging.basicConfig(level=logging.DEBUG)
@@ -25,35 +25,21 @@ def main():
 
     my_plugins.apply_all_plugins_on_value(yeardict)
 
-    schedules = set()
+    timeslotset = []
     for k, v in yeardict.items():
-        schedules.add(str(v.get_schedule()))
+        thisschedule = v.get_schedule()
+        if thisschedule not in timeslotset:
+            timeslotset.append(thisschedule)
 
-    print(schedules)
+    colours = []
+    colournum = 0
+    for slot in timeslotset:
+        thiscolour = Colour(colournum, slot)
+        colours.append(thiscolour)
+        colournum = colournum + 1
+    
+    print(colours)
+
 
 if __name__ == '__main__':
     main()
-
-## Colour all non-holidays as working days
-#for k, v in yeardict.items():
-#    if not v.holiday:
-#        v.colour = col_shiftbegin
-#
-## Colour all mondays as mondays
-#for k, v in yeardict.items():
-#    if not v.holiday:
-#        if v.dt.isoweekday == 1:
-#            v.colour = col_monday
-#
-#for k, v in yeardict.items():
-#    if v.shift == "begin":
-#        v.colour = col_shiftbegin
-#    elif v.shift == "day":
-#        v.colour = col_shiftday
-#    elif v.shift == "end":
-#        if v.holiday:
-#            v.colour = col_shiftendholiday
-#        else:
-#            v.colour = col_shiftend
-#
-#[val.colour for key, val in yeardict.items()]

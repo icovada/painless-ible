@@ -14,7 +14,7 @@ class Weekdays(plugin_collection.Plugin):
     def perform_operation(self, argument):
         for k, v in argument.items():
             if not v.holiday:
-                v.morning = ANIMATIONS_OPEN
-                v.afternoon = ANIMATIONS_OPEN
+                v.morning = "ANIMATIONS_OPEN"
+                v.afternoon = "ANIMATIONS_OPEN"
 
         return argument

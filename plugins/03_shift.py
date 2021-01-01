@@ -1,10 +1,12 @@
-import plugin_collection 
+import plugin_collection
 from settings import ANIMATIONS_OPEN, ANIMATIONS_SHIFT, FIRST_SHIFT_BEGIN, SHIFT_DURATION, SHIFT_ROTATION_DAYS
+
 
 class Mondays(plugin_collection.Plugin):
     """
     This plugin fills the week with standard weekday configuration
     """
+
     def __init__(self):
         super().__init__()
         self.priority = 3
@@ -19,27 +21,27 @@ class Mondays(plugin_collection.Plugin):
                     found_first = True
                 else:
                     continue
-            
+
             if shift_day == 0:
-                v.morning = ANIMATIONS_SHIFT
-                v.lunch = ANIMATIONS_SHIFT
-                v.afternoon = ANIMATIONS_SHIFT
-                v.night_end = ANIMATIONS_SHIFT
+                v.morning = "ANIMATIONS_SHIFT"
+                v.lunch = "ANIMATIONS_SHIFT"
+                v.afternoon = "ANIMATIONS_SHIFT"
+                v.night_end = "ANIMATIONS_SHIFT"
             elif shift_day > 0 and shift_day < SHIFT_DURATION:
-                v.night_begin = ANIMATIONS_SHIFT
-                v.morning = ANIMATIONS_SHIFT
-                v.lunch = ANIMATIONS_SHIFT
-                v.afternoon = ANIMATIONS_SHIFT
-                v.night_end = ANIMATIONS_SHIFT
+                v.night_begin = "ANIMATIONS_SHIFT"
+                v.morning = "ANIMATIONS_SHIFT"
+                v.lunch = "ANIMATIONS_SHIFT"
+                v.afternoon = "ANIMATIONS_SHIFT"
+                v.night_end = "ANIMATIONS_SHIFT"
             elif shift_day == SHIFT_DURATION:
-                v.night_begin = ANIMATIONS_SHIFT
+                v.night_begin = "ANIMATIONS_SHIFT"
 
                 v.afternoon = None
                 if v.holiday:
                     v.morning = None
                 else:
-                    v.morning = ANIMATIONS_OPEN
-            
+                    v.morning = "ANIMATIONS_OPEN"
+
             if shift_day == SHIFT_ROTATION_DAYS:
                 shift_day = 0
             else:
