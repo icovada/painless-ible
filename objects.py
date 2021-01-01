@@ -9,6 +9,7 @@ class Day():
     holiday: bool
     shift: List[str]
     dt: datetime
+    colour: Colour
 
     def __init__(self, dt) -> None:
         self.dt = dt
@@ -99,3 +100,12 @@ class Colour():
         
         else:
             return [slotobjects[0]], slotobjects[1:]
+
+class DayStreak():
+    begin: datetime
+    end: datetime
+    colour: Colour
+
+    def __init__(self, begin, colour) -> None:
+        self.begin = begin
+        self.colour = colour
