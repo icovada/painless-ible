@@ -5,7 +5,7 @@ Automatic LedBuild calendar file generator
 from datetime import datetime as dt
 from datetime import timedelta
 import logging
-from settings import YEAR, ANIMATIONS_OPEN, ANIMATIONS_SHIFT
+from settings import YEAR, ANIMATIONS_OPEN, ANIMATIONS_SHIFT, ANIMATION_CLOSED
 from objects import Colour, Day, DayStreak
 from plugin_collection import PluginCollection
 
@@ -16,6 +16,7 @@ def generate_timetable():
     my_plugins = PluginCollection('plugins')
     # Create dictionary for the whole year
     yearbegin = dt(YEAR, 1, 1)
+    #yearend = dt(YEAR+1, 1, 1)
     yearend = dt(YEAR+1, 1, 1)
     curday = yearbegin
 
@@ -33,7 +34,7 @@ def generate_timetable():
             timeslotset.append(thisschedule)
 
     colours = []
-    colournum = 0
+    colournum = 8
     for slot in timeslotset:
         thiscolour = Colour(colournum, slot)
         colours.append(thiscolour)
@@ -67,14 +68,17 @@ def generate_timetable():
 
     return finalschedule
 
-def generate_line(group, timeslotid, thisgroup, thistimeslot, animationid):
+def generate_line(group, timeslotid, thisgroup, thistimeslot, animationid, firstrun):
     binaryout = b''
 
     # Header
-    if group == 0:
-        binaryout += b'\x00'
+    if firstrun:
+        binaryout += b'\x00\x00'
     else:
         binaryout += b'\x00\x00\x00'
+
+    # Group
+    binaryout += group.to_bytes(length=2, byteorder='little')
 
     # Timeslot
     binaryout += timeslotid.to_bytes(length=2, byteorder='little')
@@ -84,7 +88,7 @@ def generate_line(group, timeslotid, thisgroup, thistimeslot, animationid):
     binaryout += thisgroup.colour.colour.to_bytes(length=4, byteorder='little')
 
     # Unknown
-    binaryout += b'\x00\x00\x99\x9a\x53\x00'
+    binaryout += b'\x00\x00\x58\xf7\x31\x00'
 
     # End time, m
     binaryout += thistimeslot.end[1].to_bytes(length=1, byteorder='little')
@@ -99,13 +103,17 @@ def generate_line(group, timeslotid, thisgroup, thistimeslot, animationid):
     binaryout += thistimeslot.begin[0].to_bytes(length=1, byteorder='little')
 
     # Bitmap of weekdays
-    binaryout += b'\x7F'
+    #binaryout += b'\x7F'
+    binaryout += b'\x40'
 
     # End day
     binaryout += thisgroup.end.day.to_bytes(length=1, byteorder='little')
 
     # End month
     binaryout += thisgroup.end.month.to_bytes(length=1, byteorder='little')
+
+    # Unknown
+    binaryout += b'\xe5\x07'
 
     # Start day
     binaryout += thisgroup.begin.day.to_bytes(length=1, byteorder='little')
@@ -135,6 +143,7 @@ def save_to_binary(schedule):
     [animationset.add(x) for x in ANIMATIONS_SHIFT]
     animationlist = list(animationset)
 
+    firstrun = True
     for group in range(0,len(schedule)):
         thisgroup = schedule[group]
         for timeslotid in range(0,len(thisgroup.colour.timeslots)):
@@ -143,15 +152,33 @@ def save_to_binary(schedule):
             for animation in globals()[thistimeslot.animations]:
                 animationid = globals()[thistimeslot.animations].index(animation)
 
-                programdata += generate_line(group, timeslotid, thisgroup, thistimeslot, animationid)
+                programdata += generate_line(group, timeslotid, thisgroup, thistimeslot, animationid, firstrun)
+                firstrun = False
 
                 animationindex = animationindex +1
     
     
-    with open("calfake.bin","wb") as outfile:
-        outfile.write(programdata)
+    binary_animationlist = [x.encode('ascii') for x in animationlist]
+    separator = b'\x1c'
 
-    print(programdata)
+    bin_programlist = separator.join(binary_animationlist)
+    bin_programlist += b'\x1c' + ANIMATION_CLOSED.encode('ascii')
+    bin_programlist += b'\x1c\x1d\x01'
+    bin_programlist += len(animationlist).to_bytes(length=1, byteorder='little')
+    bin_programlist += b'\x00\x1d'
+
+    header = b'\x50\x48\x54\x00\x00\x00\x00\x00\x31\x31\x30\x00\x00\x00\x00\x00\x31\x2f\x31\x2f\x32\x30\x32\x31\x2f\x00\x00'
+
+    length = len(programdata) + len(bin_programlist) -1
+
+    with open("2021/calfake.cal","wb") as outfile:
+        outfile.write(header)
+        outfile.write(length.to_bytes(length=4, byteorder='little'))
+        outfile.write(b'\x1d')
+        outfile.write(programdata)
+        outfile.write(b'\x1d')
+        outfile.write(bin_programlist)
+
 
 
 if __name__ == '__main__':

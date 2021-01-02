@@ -31,3 +31,5 @@ ANIMATIONS_OPEN = [
     "GT-12",
     "GT-23"
 ]
+
+ANIMATION_CLOSED = "CHIUSOoradata"
