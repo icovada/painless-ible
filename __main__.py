@@ -16,7 +16,6 @@ def generate_timetable():
     my_plugins = PluginCollection('plugins')
     # Create dictionary for the whole year
     yearbegin = dt(YEAR, 1, 1)
-    #yearend = dt(YEAR+1, 1, 1)
     yearend = dt(YEAR+1, 1, 1)
     curday = yearbegin
 
@@ -102,9 +101,8 @@ def generate_line(group, timeslotid, thisgroup, thistimeslot, animationid, first
     # Start time, h
     binaryout += thistimeslot.begin[0].to_bytes(length=1, byteorder='little')
 
-    # Bitmap of weekdays
-    #binaryout += b'\x7F'
-    binaryout += b'\x40'
+    # Bitmap of weekdays (all 1, it's fine)
+    binaryout += b'\xFF'
 
     # End day
     binaryout += thisgroup.end.day.to_bytes(length=1, byteorder='little')
@@ -140,7 +138,7 @@ def save_to_binary(schedule):
 
     animationset = set()
     [animationset.add(x) for x in ANIMATIONS_SHIFT]
-    [animationset.add(x) for x in ANIMATIONS_SHIFT]
+    [animationset.add(x) for x in ANIMATIONS_OPEN]
     animationlist = list(animationset)
 
     firstrun = True
@@ -150,7 +148,7 @@ def save_to_binary(schedule):
             thistimeslot = thisgroup.colour.timeslots[timeslotid]
             animationindex = 0
             for animation in globals()[thistimeslot.animations]:
-                animationid = globals()[thistimeslot.animations].index(animation)
+                animationid = animationlist.index(animation)
 
                 programdata += generate_line(group, timeslotid, thisgroup, thistimeslot, animationid, firstrun)
                 firstrun = False

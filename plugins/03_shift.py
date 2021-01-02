@@ -42,7 +42,7 @@ class Mondays(plugin_collection.Plugin):
                 else:
                     v.morning = "ANIMATIONS_OPEN"
 
-            if shift_day == SHIFT_ROTATION_DAYS:
+            if shift_day == SHIFT_ROTATION_DAYS-1:
                 shift_day = 0
             else:
                 shift_day = shift_day + 1
