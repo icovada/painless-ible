@@ -88,7 +88,9 @@ Let's dissect the binary code:
 * Separator `1D`
 * `1C`-separated list of program names, `String`, with unknown amount of padding spaces
 * Separator `1D`
-* End of block(?) `00 FF 00`
+* Whether next byte is used or not, `bool`, `00`
+* Program number to use when no schedule is active `FF`. `FF` if not set.
+* Unknown `00`
 * Separator `1D`
 
 ### Program (animation) data
@@ -104,7 +106,7 @@ Regardless of the fact that every "colour" already defines a set of predefined p
 * Colour of block (again), `long`: `0000 0000`
 * Type: 
   * Colour with one timeslot: `0000 f8f6 3100`
-  * Colour with many timeslots: `0000 f8f7 3100`
+  * Colour with many timeslots: `0000 58f7 3100`
   * Unknown `0000 999A 5300`
 * End time, minutes, `int`: `00`
 * End time, hours, `int`: `02`
