@@ -54,7 +54,8 @@ class PluginCollection(object):
         """
         print()
         print(f'Applying all plugins:')
-        priorities = [x.priority for x in self.plugins]
+        # Remove duplicate priosities
+        priorities = list(dict.fromkeys([x.priority for x in self.plugins]))
         priorities.sort()
         for i in priorities:
             for j in self.plugins:
