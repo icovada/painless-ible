@@ -2,7 +2,7 @@ import plugin_collection
 from settings import ANIMATIONS_OPEN, ANIMATIONS_SHIFT, FIRST_SHIFT_BEGIN, SHIFT_DURATION, SHIFT_ROTATION_DAYS
 
 
-class Mondays(plugin_collection.Plugin):
+class Shifts(plugin_collection.Plugin):
     """
     This plugin fills the week with standard weekday configuration
     """
@@ -10,7 +10,7 @@ class Mondays(plugin_collection.Plugin):
     def __init__(self):
         super().__init__()
         self.priority = 3
-        self.description = 'Mondays'
+        self.description = 'Shifts'
 
     def perform_operation(self, argument):
         found_first = False

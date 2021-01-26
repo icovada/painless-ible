@@ -1,4 +1,5 @@
 import plugin_collection 
+
 class Mondays(plugin_collection.Plugin):
     """
     This plugin fills the week with standard weekday configuration
