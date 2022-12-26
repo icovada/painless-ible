@@ -144,16 +144,12 @@ def save_to_binary(schedule):
     firstrun = True
     for group_pos, group in enumerate(schedule):
         for timeslot_pos, timeslot in enumerate(group.colour.timeslots):
-            animationindex = 0
             for animation in globals()[timeslot.animations]:
                 animationid = animationlist.index(animation)
 
                 programdata += generate_line(group_pos, timeslot_pos, group, timeslot, animationid, firstrun)
                 firstrun = False
 
-                animationindex = animationindex +1
-    
-    
     binary_animationlist = [x.encode('ascii') for x in animationlist]
     separator = b'\x1c'
 
