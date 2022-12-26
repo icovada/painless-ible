@@ -2,7 +2,7 @@ import plugin_collection
 
 class Mondays(plugin_collection.Plugin):
     """
-    This plugin fills the week with standard weekday configuration
+    This plugin applies Monday morning closre on all Mondays
     """
     def __init__(self):
         super().__init__()

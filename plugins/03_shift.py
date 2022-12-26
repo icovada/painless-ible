@@ -4,7 +4,7 @@ from settings import ANIMATIONS_OPEN, ANIMATIONS_SHIFT, FIRST_SHIFT_BEGIN, SHIFT
 
 class Shifts(plugin_collection.Plugin):
     """
-    This plugin fills the week with standard weekday configuration
+    This plugin applies Shift animations on Shift days
     """
 
     def __init__(self):
