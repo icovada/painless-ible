@@ -163,7 +163,10 @@ def save_to_binary(schedule):
     bin_programlist += len(animationlist).to_bytes(length=1, byteorder='little')
     bin_programlist += b'\x00\x1d'
 
-    header = b'\x50\x48\x54\x00\x00\x00\x00\x00\x31\x31\x30\x00\x00\x00\x00\x00\x31\x2f\x31\x2f\x32\x30\x32\x31\x2f\x00\x00'
+    header_1st_part = b'\x50\x48\x54\x00\x00\x00\x00\x00\x31\x31\x30\x00\x00\x00\x00\x00'
+    header_date = f'1/1/{YEAR}'.encode('ascii')
+
+    header = header_1st_part + header_date
 
     length = len(programdata) + len(bin_programlist) -1
 
