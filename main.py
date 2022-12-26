@@ -162,7 +162,7 @@ def save_to_binary(schedule):
     header_1st_part = b'\x50\x48\x54\x00\x00\x00\x00\x00\x31\x31\x30\x00\x00\x00\x00\x00'
     header_date = f'1/1/{YEAR}'.encode('ascii')
 
-    header = header_1st_part + header_date
+    header = header_1st_part + header_date + b'\x2f\x00\x00'
 
     length = len(programdata) + len(bin_programlist) -1
 
