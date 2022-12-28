@@ -19,6 +19,7 @@ def generate_timetable():
     yearend = dt(YEAR+1, 1, 1)
     curday = yearbegin
 
+    # Fill dictionary with Day instances
     yeardict = {}
     while curday != yearend:
         yeardict[curday] = Day(curday)
@@ -26,12 +27,15 @@ def generate_timetable():
 
     my_plugins.apply_all_plugins_on_value(yeardict)
 
+    # Generate set of all possible combinations of time slots for the year
+    # Can't use a set() because Lists are not hashable
     timeslotset = []
     for k, v in yeardict.items():
         thisschedule = v.get_schedule()
         if thisschedule not in timeslotset:
             timeslotset.append(thisschedule)
 
+    # Generate a Colour for each timeslot set
     colours = []
     colournum = 8
     for slot in timeslotset:
