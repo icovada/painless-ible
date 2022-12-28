@@ -168,11 +168,13 @@ def save_to_binary(schedule):
                                                    byteorder='little')
     bin_programlist += b'\x00\x1d'
 
-    header = b'\x50\x48\x54\x00\x00\x00\x00\x00\x31\x31\x30\x00\x00\x00\x00\x00\x31\x2f\x31\x2f\x32\x30\x32\x31\x2f\x00\x00'
+    header = b'\x50\x48\x54\x00\x00\x00\x00\x00\x31\x31\x30\x00\x00\x00\x00\x00'
+    header += ('1/1/' + str(YEAR)).encode('ascii')
+    header += b'\x2f\x00\x00'
 
     length = len(programdata) + len(bin_programlist) - 1
 
-    with open("2021/calfake.cal", "wb") as outfile:
+    with open(f"Programmazione croce/{YEAR}/calendario2020.cal", "wb") as outfile:
         outfile.write(header)
         outfile.write(length.to_bytes(length=4, byteorder='little'))
         outfile.write(b'\x1d')
