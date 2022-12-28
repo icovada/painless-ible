@@ -139,20 +139,18 @@ def save_to_binary(schedule):
     programdata = b''
 
     animationset = set()
-    [animationset.add(x) for x in ANIMATIONS_SHIFT]
-    [animationset.add(x) for x in ANIMATIONS_OPEN]
+    _ = [animationset.add(x) for x in ANIMATIONS_SHIFT]
+    _ = [animationset.add(x) for x in ANIMATIONS_OPEN]
     animationlist = list(animationset)
 
     firstrun = True
-    for group in range(0,len(schedule)):
-        thisgroup = schedule[group]
-        for timeslotid in range(0,len(thisgroup.colour.timeslots)):
-            thistimeslot = thisgroup.colour.timeslots[timeslotid]
+    for group_pos, group in enumerate(schedule):
+        for timeslot_pos, timeslot in enumerate(group.colour.timeslots):
             animationindex = 0
-            for animation in globals()[thistimeslot.animations]:
+            for animation in globals()[timeslot.animations]:
                 animationid = animationlist.index(animation)
 
-                programdata += generate_line(group, timeslotid, thisgroup, thistimeslot, animationid, firstrun)
+                programdata += generate_line(group_pos, timeslot_pos, group, timeslot, animationid, firstrun)
                 firstrun = False
 
                 animationindex = animationindex +1
