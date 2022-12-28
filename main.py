@@ -51,7 +51,7 @@ def generate_timetable():
     finalschedule = []
     while curday != yearend:
         if len(yeardict[curday].colour.timeslots) == 0:
-            #Empty day
+            # Empty day
             curday = curday + timedelta(days=1)
             continue
 
@@ -68,6 +68,7 @@ def generate_timetable():
         finalschedule.append(thisstreak)
 
     return finalschedule
+
 
 def generate_line(group, timeslotid, thisgroup, thistimeslot, animationid, firstrun):
     binaryout = b''
@@ -135,6 +136,7 @@ def generate_line(group, timeslotid, thisgroup, thistimeslot, animationid, first
 
     return binaryout
 
+
 def save_to_binary(schedule):
     programdata = b''
 
@@ -150,33 +152,33 @@ def save_to_binary(schedule):
             for animation in globals()[timeslot.animations]:
                 animationid = animationlist.index(animation)
 
-                programdata += generate_line(group_pos, timeslot_pos, group, timeslot, animationid, firstrun)
+                programdata += generate_line(group_pos, timeslot_pos,
+                                             group, timeslot, animationid, firstrun)
                 firstrun = False
 
-                animationindex = animationindex +1
-    
-    
+                animationindex = animationindex + 1
+
     binary_animationlist = [x.encode('ascii') for x in animationlist]
     separator = b'\x1c'
 
     bin_programlist = separator.join(binary_animationlist)
     bin_programlist += b'\x1c' + ANIMATION_CLOSED.encode('ascii')
     bin_programlist += b'\x1c\x1d\x01'
-    bin_programlist += len(animationlist).to_bytes(length=1, byteorder='little')
+    bin_programlist += len(animationlist).to_bytes(length=1,
+                                                   byteorder='little')
     bin_programlist += b'\x00\x1d'
 
     header = b'\x50\x48\x54\x00\x00\x00\x00\x00\x31\x31\x30\x00\x00\x00\x00\x00\x31\x2f\x31\x2f\x32\x30\x32\x31\x2f\x00\x00'
 
-    length = len(programdata) + len(bin_programlist) -1
+    length = len(programdata) + len(bin_programlist) - 1
 
-    with open("2021/calfake.cal","wb") as outfile:
+    with open("2021/calfake.cal", "wb") as outfile:
         outfile.write(header)
         outfile.write(length.to_bytes(length=4, byteorder='little'))
         outfile.write(b'\x1d')
         outfile.write(programdata)
         outfile.write(b'\x1d')
         outfile.write(bin_programlist)
-
 
 
 if __name__ == '__main__':
