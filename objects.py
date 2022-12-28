@@ -25,10 +25,10 @@ class Day():
         self.afternoon = None
         self.night_end = None
 
-    def get_schedule(self):
+    def get_schedule(self) -> tuple:
         schedule = [self.night_begin, self.morning, self.lunch, self.afternoon, self.night_end]
 
-        return schedule
+        return tuple(schedule)
 
 class Timeslot():
     """

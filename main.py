@@ -29,25 +29,23 @@ def generate_timetable():
 
     # Generate set of all possible combinations of time slots for the year
     # Can't use a set() because Lists are not hashable
-    timeslotset = []
+    timeslotset = set()
     for k, v in yeardict.items():
         thisschedule = v.get_schedule()
-        if thisschedule not in timeslotset:
-            timeslotset.append(thisschedule)
+        timeslotset.add(thisschedule)
 
     # Generate a Colour for each timeslot set
-    colours = []
+    colours_assignment = {}
     colournum = 8
     for slot in timeslotset:
-        thiscolour = Colour(colournum, slot)
-        colours.append(thiscolour)
+        colours_assignment.update({
+            slot: Colour(colournum, slot)
+        })
         colournum = colournum + 1
 
     # Since colours and timeslots are sorted the same, assign a colour to each day
     for k, v in yeardict.items():
-        thisschedule = v.get_schedule()
-        thiscolourindex = timeslotset.index(thisschedule)
-        v.colour = colours[thiscolourindex]
+        v.colour = colours_assignment[v.get_schedule()]
 
     curday = yearbegin
     finalschedule = []
