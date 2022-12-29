@@ -2,7 +2,7 @@
 import io
 from datetime import datetime as dt
 from iblestructs import ible_decode_animation
-
+import csv
 
 def decode_header(infile: io.BufferedReader):
     "Decode file header"
@@ -47,16 +47,29 @@ def decoder(infile):
     while (animation := ible_decode_animation(infile)) is not None:
         animations.append(animation)
 
-    footer = decode_footer(infile)
+    footer = decode_footer(infile)[:-1]
 
-    return True
+
+    animation_out = []
+
+    for animation in animations:
+        thisanimation = list(animation)
+        thisanimation[16] = footer[animation[16]]
+        animation_out.append(thisanimation)
+
+    return animation_out
 
 
 def main():
     "Main function"
 
     with open("calfake.cal", "rb") as infile:
-        result = decoder(infile)
+        animations = decoder(infile)
+
+    with open("calout.csv", "w") as outfile:
+        writer = csv.writer(outfile)
+
+        writer.writerows(animations)
 
 
 if __name__ == '__main__':
