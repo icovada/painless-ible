@@ -115,10 +115,10 @@ Regardless of the fact that every "colour" already defines a set of predefined p
 * Bitmap of weekdays, `int`: `20`
 * End day, `int`: `01`
 * End month, `int`: `01`
-* Separator `e507`
+* End year, `int`: `e507`
 * Start day, `int`: `01`
 * Start month, `int`: `01`
-* Separator `e507`
+* Start year, `int`: `e507`
 * Index of program `int`. Lookup to the string in the file footer
 * Unknown `00`
 * End of section: `1e`

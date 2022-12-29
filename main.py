@@ -113,8 +113,8 @@ def generate_line(group, timeslotid, thisgroup, thistimeslot, animationid, first
     # End month
     binaryout += thisgroup.end.month.to_bytes(length=1, byteorder='little')
 
-    # Unknown
-    binaryout += b'\xe5\x07'
+    # End year
+    binaryout += YEAR.to_bytes(length=2, byteorder='little')
 
     # Start day
     binaryout += thisgroup.begin.day.to_bytes(length=1, byteorder='little')
@@ -122,8 +122,8 @@ def generate_line(group, timeslotid, thisgroup, thistimeslot, animationid, first
     # Start month
     binaryout += thisgroup.begin.month.to_bytes(length=1, byteorder='little')
 
-    # Unknown
-    binaryout += b'\xe5\x07'
+    # Start year
+    binaryout += YEAR.to_bytes(length=2, byteorder='little')
 
     # Program index
     binaryout += animationid.to_bytes(length=1, byteorder='little')
