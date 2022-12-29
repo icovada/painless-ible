@@ -8,6 +8,7 @@ import logging
 from settings import YEAR, ANIMATIONS_OPEN, ANIMATIONS_SHIFT, ANIMATION_CLOSED
 from objects import Colour, Day, DayStreak
 from plugin_collection import PluginCollection
+from iblestructs import ible_encode
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -70,69 +71,26 @@ def generate_timetable():
     return finalschedule
 
 
-def generate_line(group, timeslotid, thisgroup, thistimeslot, animationid, firstrun):
-    binaryout = b''
+def generate_struct(group, timeslotid, thisgroup, thistimeslot, animationid, firstrun):
+    "Generate progrm struct"
 
-    # Header
-    if firstrun:
-        binaryout += b'\x00\x00'
-    else:
-        binaryout += b'\x00\x00\x00'
-
-    # Group
-    binaryout += group.to_bytes(length=2, byteorder='little')
-
-    # Timeslot
-    binaryout += timeslotid.to_bytes(length=2, byteorder='little')
-
-    # Colour
-    binaryout += thisgroup.colour.colour.to_bytes(length=4, byteorder='little')
-    binaryout += thisgroup.colour.colour.to_bytes(length=4, byteorder='little')
-
-    # Unknown
-    binaryout += b'\x00\x00\x58\xf7\x31\x00'
-
-    # End time, m
-    binaryout += thistimeslot.end[1].to_bytes(length=1, byteorder='little')
-
-    # End time, h
-    binaryout += thistimeslot.end[0].to_bytes(length=1, byteorder='little')
-
-    # Start time, m
-    binaryout += thistimeslot.begin[1].to_bytes(length=1, byteorder='little')
-
-    # Start time, h
-    binaryout += thistimeslot.begin[0].to_bytes(length=1, byteorder='little')
-
-    # Bitmap of weekdays (all 1, it's fine)
-    binaryout += b'\xFF'
-
-    # End day
-    binaryout += thisgroup.end.day.to_bytes(length=1, byteorder='little')
-
-    # End month
-    binaryout += thisgroup.end.month.to_bytes(length=1, byteorder='little')
-
-    # End year
-    binaryout += YEAR.to_bytes(length=2, byteorder='little')
-
-    # Start day
-    binaryout += thisgroup.begin.day.to_bytes(length=1, byteorder='little')
-
-    # Start month
-    binaryout += thisgroup.begin.month.to_bytes(length=1, byteorder='little')
-
-    # Start year
-    binaryout += YEAR.to_bytes(length=2, byteorder='little')
-
-    # Program index
-    binaryout += animationid.to_bytes(length=1, byteorder='little')
-
-    # Unknown
-    binaryout += b'\x00'
-
-    # Separator
-    binaryout += b'\x1e'
+    binaryout = ible_encode(
+        group,
+        timeslotid,
+        thisgroup.colour.colour,
+        thistimeslot.end[1],
+        thistimeslot.end[0],
+        thistimeslot.begin[1],
+        thistimeslot.begin[0],
+        thisgroup.end.day,
+        thisgroup.end.month,
+        YEAR,
+        thisgroup.begin.day,
+        thisgroup.begin.month,
+        YEAR,
+        animationid,
+        firstrun
+    )
 
     return binaryout
 
@@ -152,8 +110,9 @@ def save_to_binary(schedule):
             for animation in globals()[timeslot.animations]:
                 animationid = animationlist.index(animation)
 
-                programdata += generate_line(group_pos, timeslot_pos,
-                                             group, timeslot, animationid, firstrun)
+                programdata += generate_struct(
+                    group_pos, timeslot_pos, group, timeslot, animationid, firstrun)
+
                 firstrun = False
 
                 animationindex = animationindex + 1
