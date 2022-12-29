@@ -1,8 +1,8 @@
 from datetime import datetime as dt
 
-YEAR = 2021
+YEAR = 2023
 SHIFT_DURATION = 7
-FIRST_SHIFT_BEGIN = dt(2021, 1, 16)
+FIRST_SHIFT_BEGIN = dt(YEAR, 1, 28)
 SHIFT_ROTATION_DAYS = 28
 
 TIME_NIGHT_BEGIN = [(0,0), (8,30)]
