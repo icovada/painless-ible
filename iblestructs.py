@@ -1,11 +1,13 @@
 "Define binary data format as structs"
-from struct import pack
+from struct import pack, unpack
+import io
+from collections import namedtuple
 
 RECORD_FORMAT = "<xxHHIIxxIBBBBBBBHBBHBxB"
 SEC_RECORD_FORMAT = "<xxxHHIIxxIBBBBBBBHBBHBxB"
 
 
-def ible_encode(
+def ible_encode_animation(
         group: int,
         timeslot: int,
         colour: int,
@@ -50,3 +52,34 @@ def ible_encode(
         b_out = pack(SEC_RECORD_FORMAT, *data)
 
     return b_out
+
+
+def ible_decode_animation(stream: io.BufferedIOBase) -> dict | None:
+    """
+    Read struct and return decoded data as dict
+    Returns None if animation data block is over
+    Does not rewind incoming stream
+    """
+
+    Animation = namedtuple("Animation", "group timeslot colour colour2 unknown1 end_min end_hour start_min start_hour day_bitmap end_day end_month end_year start_day start_month start_year index separator")
+    data_block = b''
+
+    this_byte = stream.read(1)
+    if this_byte == b'\x1d':
+        # End of animation blocks
+        return None
+
+    data_block += this_byte
+
+    data_block += stream.read(35)
+    format = RECORD_FORMAT
+    
+    if data_block[-2:] != b'\x00\x1e':
+        data_block += stream.read(1)
+        format = SEC_RECORD_FORMAT
+
+    assert data_block[-2:] == b'\x00\x1e'
+
+    data = Animation._make(unpack(format, data_block))
+
+    return data

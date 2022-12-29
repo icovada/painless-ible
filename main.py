@@ -8,7 +8,7 @@ import logging
 from settings import YEAR, ANIMATIONS_OPEN, ANIMATIONS_SHIFT, ANIMATION_CLOSED
 from objects import Colour, Day, DayStreak
 from plugin_collection import PluginCollection
-from iblestructs import ible_encode
+from iblestructs import ible_encode_animation
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -74,7 +74,7 @@ def generate_timetable():
 def generate_struct(group, timeslotid, thisgroup, thistimeslot, animationid, firstrun):
     "Generate progrm struct"
 
-    binaryout = ible_encode(
+    binaryout = ible_encode_animation(
         group,
         timeslotid,
         thisgroup.colour.colour,
