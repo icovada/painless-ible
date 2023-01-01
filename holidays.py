@@ -1,7 +1,10 @@
-from settings import YEAR
+"Define static (national) holidays and closing days"
+
 from datetime import datetime as dt
-from datetime import timedelta
 from dateutil.easter import easter
+from settings import YEAR
+
+_easter = easter(YEAR)
 
 fixed_holidays = [dt(YEAR, 1, 1),
                   dt(YEAR, 1, 6),
@@ -10,12 +13,14 @@ fixed_holidays = [dt(YEAR, 1, 1),
                   dt(YEAR, 6, 2),
                   dt(YEAR, 6, 24),
                   dt(YEAR, 8, 15),
-                  dt(YEAR, 9, 1),
+                  dt(YEAR, 11, 1),
                   dt(YEAR, 12, 8),
                   dt(YEAR, 12, 25),
                   dt(YEAR, 12, 26),
-                  easter(YEAR)+timedelta(days=1),
-                  easter(YEAR)]
+                  # easter() returns date but we need a datetime
+                  dt(_easter.year, _easter.month, _easter.day),
+                  dt(_easter.year, _easter.month, _easter.day+1),
+                  ]
 
 arbitrary_holidays = [dt(YEAR, 1, 7),
                       dt(YEAR, 4, 29),
